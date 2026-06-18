@@ -4,7 +4,7 @@
     /* =============================================
        CONFIG & ENDPOINTS
        ============================================= */
-    const API_BASE = 'http://localhost:8000/api';
+    const API_BASE = `${window.location.origin}/api`;
     const REFRESH_MS = 5 * 60 * 1000; // 5 min auto-refresh
     const PER_PAGE = 16;
 
