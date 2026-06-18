@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edsans — Financial &amp; Forex Intelligence Dashboard</title>
+    <meta name="description" content="Real-time financial news, market price tickers, and sentiment analysis powered by a self-learning AI model.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+
+    <!-- Live Market Price Ticker -->
+    <div class="market-ticker" id="marketTicker">
+        <div class="ticker-wrapper" id="tickerWrapper">
+            <div class="ticker-loading">Loading live market rates...</div>
+        </div>
+    </div>
+
+    <!-- Utility Bar -->
+    <div class="utility-bar">
+        <div class="utility-inner">
+            <span class="utility-date" id="currentDate"></span>
+            <div class="utility-right">
+                <button class="refresh-btn" id="refreshBtn" title="Refresh feeds & prices">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                    </svg>
+                </button>
+                <span class="live-dot"></span>
+                <span class="live-text">REALTIME AI</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="main-header" id="mainHeader">
+        <div class="header-inner">
+            <a href="/" class="logo" id="siteLogo">
+                <span class="logo-main">Ed</span><span class="logo-accent">sans</span>
+            </a>
+            <nav class="main-nav" id="mainNav">
+                <a href="#" class="nav-link active" data-category="all">All Markets</a>
+                <a href="#" class="nav-link" data-category="forex">Forex</a>
+                <a href="#" class="nav-link" data-category="stocks">Stocks</a>
+                <a href="#" class="nav-link" data-category="macro">Macroeconomy</a>
+                <a href="#" class="nav-link" data-category="commodities">Commodities</a>
+            </nav>
+            <div class="header-search" id="headerSearch">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+                </svg>
+                <input type="text" id="searchInput" placeholder="Search markets/tickers..." aria-label="Search markets">
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- Top Widgets Section: Market Sentiment, AI Model Stats & Summary -->
+        <section class="top-widgets">
+            <!-- 1. Market Sentiment -->
+            <div class="widget-box sentiment-widget">
+                <div class="widget-header">
+                    <h3>Market Sentiment Index</h3>
+                    <span class="info-tip" title="Weighted score from active headlines">Info</span>
+                </div>
+                <div class="sentiment-body">
+                    <div class="gauge-container">
+                        <svg class="gauge" viewBox="0 0 100 50">
+                            <path class="gauge-bg" d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#252a37" stroke-width="8" stroke-linecap="round" />
+                            <path class="gauge-fill" id="gaugeFill" d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="url(#gaugeGrad)" stroke-width="8" stroke-linecap="round" stroke-dasharray="125.6" stroke-dashoffset="62.8" />
+                            <defs>
+                                <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#ef4444" />
+                                    <stop offset="50%" stop-color="#f59e0b" />
+                                    <stop offset="100%" stop-color="#10b981" />
+                                </linearGradient>
+                            </defs>
+                            <polygon class="gauge-needle" id="gaugeNeedle" points="50,47 48,15 52,15" fill="#ffffff" style="transform-origin: 50px 47px; transform: rotate(0deg);" />
+                            <circle cx="50" cy="47" r="4" fill="#ffffff" />
+                        </svg>
+                        <div class="gauge-label" id="gaugeLabel">NEUTRAL</div>
+                    </div>
+                    
+                    <div class="sentiment-metrics">
+                        <div class="sentiment-bar-wrap">
+                            <div class="sentiment-bar-labels">
+                                <span class="bull-label">Bullish (<span id="bullPct">50%</span>)</span>
+                                <span class="bear-label">Bearish (<span id="bearPct">50%</span>)</span>
+                            </div>
+                            <div class="sentiment-bar">
+                                <div class="bull-fill" id="bullFill" style="width: 50%;"></div>
+                            </div>
+                        </div>
+                        <div class="sentiment-stat">Based on <span id="analyzedCount">0</span> headlines.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Self-Learning AI Engine Statistics -->
+            <div class="widget-box ai-stats-widget">
+                <div class="widget-header">
+                    <h3>Self-Learning AI Engine</h3>
+                    <span class="widget-badge green">ACTIVE</span>
+                </div>
+                <div class="ai-stats-body">
+                    <div class="stat-row">
+                        <span class="stat-label">Model Algorithm</span>
+                        <span class="stat-val" id="modelAlgo">SGDClassifier (Online)</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Total Feedbacks Learned</span>
+                        <span class="stat-val highlight" id="modelFeedbacks">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Vocab Feature Dimensions</span>
+                        <span class="stat-val" id="modelFeatures">16,384</span>
+                    </div>
+                    <div class="stat-distribution">
+                        <div class="dist-bar" title="Learned Class distribution: Bullish / Neutral / Bearish">
+                            <div class="dist-fill bull" id="distBull" style="width: 33.3%;"></div>
+                            <div class="dist-fill neutral" id="distNeutral" style="width: 33.3%;"></div>
+                            <div class="dist-fill bear" id="distBear" style="width: 33.4%;"></div>
+                        </div>
+                        <div class="dist-labels">
+                            <span class="lbl-b">🟢 Bull (<span id="lblBullCount">0</span>)</span>
+                            <span class="lbl-n">⚪ Neu (<span id="lblNeuCount">0</span>)</span>
+                            <span class="lbl-d">🔴 Bear (<span id="lblBearCount">0</span>)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Breaking Financial Alerts -->
+            <div class="widget-box hl-ticker-widget">
+                <div class="widget-header">
+                    <h3>Market Alerts</h3>
+                    <span class="widget-badge">LIVE</span>
+                </div>
+                <div class="hl-ticker-body" id="breakingAlertsBody">
+                    <div class="ticker-alert-item">Waiting for alerts...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Source Filter Bar -->
+        <div class="source-bar" id="sourceBar" style="display:none;">
+            <span class="source-label">Source Filter</span>
+            <div class="source-pills" id="sourcePills"></div>
+        </div>
+
+        <!-- News Grid -->
+        <section class="news-grid-section">
+            <div class="news-grid" id="newsGrid">
+                <div class="skeleton skeleton-card"></div>
+                <div class="skeleton skeleton-card"></div>
+                <div class="skeleton skeleton-card"></div>
+                <div class="skeleton skeleton-card"></div>
+                <div class="skeleton skeleton-card"></div>
+                <div class="skeleton skeleton-card"></div>
+                <div class="skeleton skeleton-card"></div>
+                <div class="skeleton skeleton-card"></div>
+            </div>
+        </section>
+
+        <!-- Load More -->
+        <div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
+            <button class="load-more-btn" id="loadMoreBtn">Show More Stories</button>
+        </div>
+
+        <!-- Error Banner (hidden) -->
+        <div class="error-banner" id="errorBanner" style="display:none;">
+            <span id="errorText"></span>
+            <button class="error-retry" id="errorRetry">Retry</button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-col footer-brand">
+                <span class="logo-main">Ed</span><span class="logo-accent">sans</span>
+                <p class="footer-tagline">Real-time market tracking and financial intelligence aggregated from trusted resources.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Data Channels</h4>
+                <ul class="footer-list" id="footerSources"></ul>
+            </div>
+            <div class="footer-col">
+                <h4>Sectors</h4>
+                <ul class="footer-list">
+                    <li>All Markets</li>
+                    <li>Foreign Exchange (Forex)</li>
+                    <li>Equities &amp; Stocks</li>
+                    <li>Macroeconomics</li>
+                    <li>Commodities</li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>AI Engine &amp; Feedback Disclaimer</h4>
+                <p class="footer-about">Edsans uses a localized incremental model. Pressing 'Correct' retrains the model live in Python using SQLite. Calculated outputs do not serve as trading advice.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2026 Edsans</span>
+            <span>Last updated: <span id="lastUpdated">&mdash;</span></span>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
