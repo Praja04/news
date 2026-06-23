@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edsans — Financial &amp; Forex Intelligence Dashboard</title>
-    <meta name="description" content="Real-time financial news, market price tickers, and sentiment analysis powered by a self-learning AI model.">
+    <title>Edsans — Dashboard Intelijen Finansial &amp; Forex</title>
+    <meta name="description" content="Berita finansial real-time, ticker harga pasar, dan analisis sentimen didukung oleh model AI mandiri.">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,7 +16,7 @@
     <!-- Live Market Price Ticker -->
     <div class="market-ticker" id="marketTicker">
         <div class="ticker-wrapper" id="tickerWrapper">
-            <div class="ticker-loading">Loading live market rates...</div>
+            <div class="ticker-loading">Memuat harga pasar langsung...</div>
         </div>
     </div>
 
@@ -32,7 +32,7 @@
                     </svg>
                 </button>
                 <span class="live-dot"></span>
-                <span class="live-text">REALTIME AI</span>
+                <span class="live-text">AI REAL-TIME</span>
             </div>
         </div>
     </div>
@@ -44,17 +44,17 @@
                 <span class="logo-main">Ed</span><span class="logo-accent">sans</span>
             </a>
             <nav class="main-nav" id="mainNav">
-                <a href="#" class="nav-link active" data-category="all">All Markets</a>
+                <a href="#" class="nav-link active" data-category="all">Semua Pasar</a>
                 <a href="#" class="nav-link" data-category="forex">Forex</a>
-                <a href="#" class="nav-link" data-category="stocks">Stocks</a>
-                <a href="#" class="nav-link" data-category="macro">Macroeconomy</a>
-                <a href="#" class="nav-link" data-category="commodities">Commodities</a>
+                <a href="#" class="nav-link" data-category="stocks">Saham</a>
+                <a href="#" class="nav-link" data-category="macro">Ekonomi Makro</a>
+                <a href="#" class="nav-link" data-category="commodities">Komoditas</a>
             </nav>
             <div class="header-search" id="headerSearch">
                 <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
                 </svg>
-                <input type="text" id="searchInput" placeholder="Search markets/tickers..." aria-label="Search markets">
+                <input type="text" id="searchInput" placeholder="Cari pasar/ticker..." aria-label="Search markets">
             </div>
         </div>
     </header>
@@ -67,8 +67,8 @@
             <!-- 1. Market Sentiment -->
             <div class="widget-box sentiment-widget">
                 <div class="widget-header">
-                    <h3>Market Sentiment Index</h3>
-                    <span class="info-tip" title="Weighted score from active headlines">Info</span>
+                    <h3>Indeks Sentimen Pasar</h3>
+                    <span class="info-tip" title="Skor berbobot dari berita utama yang aktif">Info</span>
                 </div>
                 <div class="sentiment-body">
                     <div class="gauge-container">
@@ -85,20 +85,20 @@
                             <polygon class="gauge-needle" id="gaugeNeedle" points="50,47 48,15 52,15" fill="#ffffff" style="transform-origin: 50px 47px; transform: rotate(0deg);" />
                             <circle cx="50" cy="47" r="4" fill="#ffffff" />
                         </svg>
-                        <div class="gauge-label" id="gaugeLabel">NEUTRAL</div>
+                        <div class="gauge-label" id="gaugeLabel">NETRAL</div>
                     </div>
                     
                     <div class="sentiment-metrics">
                         <div class="sentiment-bar-wrap">
                             <div class="sentiment-bar-labels">
-                                <span class="bull-label">Bullish (<span id="bullPct">50%</span>)</span>
-                                <span class="bear-label">Bearish (<span id="bearPct">50%</span>)</span>
+                                <span class="bull-label">Optimis (<span id="bullPct">50%</span>)</span>
+                                <span class="bear-label">Pesimis (<span id="bearPct">50%</span>)</span>
                             </div>
                             <div class="sentiment-bar">
                                 <div class="bull-fill" id="bullFill" style="width: 50%;"></div>
                             </div>
                         </div>
-                        <div class="sentiment-stat">Based on <span id="analyzedCount">0</span> headlines.</div>
+                        <div class="sentiment-stat">Berdasarkan <span id="analyzedCount">0</span> berita utama.</div>
                     </div>
                 </div>
             </div>
@@ -106,20 +106,20 @@
             <!-- 2. Self-Learning AI Engine Statistics -->
             <div class="widget-box ai-stats-widget">
                 <div class="widget-header">
-                    <h3>Self-Learning AI Engine</h3>
-                    <span class="widget-badge green">ACTIVE</span>
+                    <h3>Mesin AI Mandiri (Self-Learning)</h3>
+                    <span class="widget-badge green">AKTIF</span>
                 </div>
                 <div class="ai-stats-body">
                     <div class="stat-row">
-                        <span class="stat-label">Model Algorithm</span>
+                        <span class="stat-label">Algoritma Model</span>
                         <span class="stat-val" id="modelAlgo">SGDClassifier (Online)</span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-label">Total Feedbacks Learned</span>
+                        <span class="stat-label">Total Umpan Balik Dipelajari</span>
                         <span class="stat-val highlight" id="modelFeedbacks">0</span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-label">Vocab Feature Dimensions</span>
+                        <span class="stat-label">Dimensi Fitur Kosakata</span>
                         <span class="stat-val" id="modelFeatures">16,384</span>
                     </div>
                     <div class="stat-distribution">
@@ -129,55 +129,85 @@
                             <div class="dist-fill bear" id="distBear" style="width: 33.4%;"></div>
                         </div>
                         <div class="dist-labels">
-                            <span class="lbl-b">🟢 Bull (<span id="lblBullCount">0</span>)</span>
-                            <span class="lbl-n">⚪ Neu (<span id="lblNeuCount">0</span>)</span>
-                            <span class="lbl-d">🔴 Bear (<span id="lblBearCount">0</span>)</span>
+                            <span class="lbl-b">🟢 Naik (<span id="lblBullCount">0</span>)</span>
+                            <span class="lbl-n">⚪ Net (<span id="lblNeuCount">0</span>)</span>
+                            <span class="lbl-d">🔴 Turun (<span id="lblBearCount">0</span>)</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 3. Breaking Financial Alerts -->
-            <div class="widget-box hl-ticker-widget">
-                <div class="widget-header">
-                    <h3>Market Alerts</h3>
-                    <span class="widget-badge">LIVE</span>
-                </div>
-                <div class="hl-ticker-body" id="breakingAlertsBody">
-                    <div class="ticker-alert-item">Waiting for alerts...</div>
-                </div>
-            </div>
         </section>
 
         <!-- Source Filter Bar -->
         <div class="source-bar" id="sourceBar" style="display:none;">
-            <span class="source-label">Source Filter</span>
+            <span class="source-label">Filter Sumber</span>
             <div class="source-pills" id="sourcePills"></div>
         </div>
 
-        <!-- News Grid -->
-        <section class="news-grid-section">
-            <div class="news-grid" id="newsGrid">
-                <div class="skeleton skeleton-card"></div>
-                <div class="skeleton skeleton-card"></div>
-                <div class="skeleton skeleton-card"></div>
-                <div class="skeleton skeleton-card"></div>
-                <div class="skeleton skeleton-card"></div>
-                <div class="skeleton skeleton-card"></div>
-                <div class="skeleton skeleton-card"></div>
-                <div class="skeleton skeleton-card"></div>
+        <!-- News Layout containing Grid and Sidebar -->
+        <div class="news-layout">
+            <!-- Left Column: News Grid -->
+            <div class="news-grid-column">
+                <section class="news-grid-section">
+                    <div class="news-grid" id="newsGrid">
+                        <div class="skeleton skeleton-card"></div>
+                        <div class="skeleton skeleton-card"></div>
+                        <div class="skeleton skeleton-card"></div>
+                        <div class="skeleton skeleton-card"></div>
+                        <div class="skeleton skeleton-card"></div>
+                        <div class="skeleton skeleton-card"></div>
+                        <div class="skeleton skeleton-card"></div>
+                        <div class="skeleton skeleton-card"></div>
+                    </div>
+                </section>
             </div>
-        </section>
+
+            <!-- Right Column: Sidebar -->
+            <aside class="news-sidebar">
+                <!-- CNBC Indonesia Live TV Widget -->
+                <div class="widget-box live-tv-widget">
+                    <div class="widget-header">
+                        <h3>CNBC Indonesia Live TV</h3>
+                        <div class="live-status">
+                            <span class="pulse-dot"></span>
+                            <span class="live-label">SIARAN LANGSUNG</span>
+                        </div>
+                    </div>
+                    <div class="live-tv-container">
+                        <iframe 
+                            class="live-tv-player"
+                            src="https://www.youtube.com/embed/live_stream?channel=UCN31H-5xGk52z1L-O5H570Q" 
+                            title="CNBC Indonesia Live" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+
+                <!-- Alarm Pasar (Market Alerts) -->
+                <div class="widget-box hl-ticker-widget">
+                    <div class="widget-header">
+                        <h3>Alarm Pasar</h3>
+                        <span class="widget-badge">LANGSUNG</span>
+                    </div>
+                    <div class="hl-ticker-body" id="breakingAlertsBody">
+                        <div class="ticker-alert-item">Menunggu alarm...</div>
+                    </div>
+                </div>
+            </aside>
+        </div>
 
         <!-- Load More -->
         <div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
-            <button class="load-more-btn" id="loadMoreBtn">Show More Stories</button>
+            <button class="load-more-btn" id="loadMoreBtn">Tampilkan Lebih Banyak</button>
         </div>
 
         <!-- Error Banner (hidden) -->
         <div class="error-banner" id="errorBanner" style="display:none;">
             <span id="errorText"></span>
-            <button class="error-retry" id="errorRetry">Retry</button>
+            <button class="error-retry" id="errorRetry">Ulangi</button>
         </div>
     </main>
 
@@ -186,30 +216,30 @@
         <div class="footer-inner">
             <div class="footer-col footer-brand">
                 <span class="logo-main">Ed</span><span class="logo-accent">sans</span>
-                <p class="footer-tagline">Real-time market tracking and financial intelligence aggregated from trusted resources.</p>
+                <p class="footer-tagline">Pemantauan pasar real-time dan analisis sentimen finansial dari sumber terpercaya.</p>
             </div>
             <div class="footer-col">
-                <h4>Data Channels</h4>
+                <h4>Saluran Data</h4>
                 <ul class="footer-list" id="footerSources"></ul>
             </div>
             <div class="footer-col">
-                <h4>Sectors</h4>
+                <h4>Sektor</h4>
                 <ul class="footer-list">
-                    <li>All Markets</li>
-                    <li>Foreign Exchange (Forex)</li>
-                    <li>Equities &amp; Stocks</li>
-                    <li>Macroeconomics</li>
-                    <li>Commodities</li>
+                    <li>Semua Pasar</li>
+                    <li>Valuta Asing (Forex)</li>
+                    <li>Saham &amp; Ekuitas</li>
+                    <li>Ekonomi Makro</li>
+                    <li>Komoditas</li>
                 </ul>
             </div>
             <div class="footer-col">
-                <h4>AI Engine &amp; Feedback Disclaimer</h4>
-                <p class="footer-about">Edsans uses a localized incremental model. Pressing 'Correct' retrains the model live in Python using SQLite. Calculated outputs do not serve as trading advice.</p>
+                <h4>Penyangkalan (Disclaimer) AI &amp; Umpan Balik</h4>
+                <p class="footer-about">Edsans menggunakan model inkremental lokal. Menekan 'Koreksi' melatih ulang model secara langsung di Python menggunakan SQLite. Output yang dihasilkan bukan merupakan saran trading.</p>
             </div>
         </div>
         <div class="footer-bottom">
             <span>&copy; 2026 Edsans</span>
-            <span>Last updated: <span id="lastUpdated">&mdash;</span></span>
+            <span>Pembaruan terakhir: <span id="lastUpdated">&mdash;</span></span>
         </div>
     </footer>
 

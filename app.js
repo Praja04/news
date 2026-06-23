@@ -85,18 +85,18 @@
         const d = new Date(dateStr);
         if (isNaN(d)) return '';
         const s = Math.floor((Date.now() - d) / 1000);
-        if (s < 60)    return 'Just now';
-        if (s < 3600)  return Math.floor(s / 60) + 'm ago';
-        if (s < 86400) return Math.floor(s / 3600) + 'h ago';
-        if (s < 172800) return 'Yesterday';
-        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        if (s < 60)    return 'Baru saja';
+        if (s < 3600)  return Math.floor(s / 60) + ' menit lalu';
+        if (s < 86400) return Math.floor(s / 3600) + ' jam lalu';
+        if (s < 172800) return 'Kemarin';
+        return d.toLocaleDateString('id-ID', { month: 'short', day: 'numeric' });
     }
 
     function formatFullDate(dateStr) {
         if (!dateStr) return '';
         const d = new Date(dateStr);
         if (isNaN(d)) return '';
-        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+        return d.toLocaleDateString('id-ID', { month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
     }
 
     function escHtml(str) {
@@ -106,7 +106,7 @@
     }
 
     function fmtDate() {
-        return new Date().toLocaleDateString('en-US', {
+        return new Date().toLocaleDateString('id-ID', {
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
         });
     }
@@ -148,7 +148,7 @@
     // --- Market Sentiment Widget ---
     function updateSentimentWidget(list) {
         if (!list.length) {
-            dom.gaugeLabel.textContent = 'NO DATA';
+            dom.gaugeLabel.textContent = 'TIDAK ADA DATA';
             dom.bullPct.textContent = '0%';
             dom.bearPct.textContent = '0%';
             dom.bullFill.style.width = '50%';
@@ -179,19 +179,19 @@
         dom.gaugeNeedle.style.transform = `rotate(${rotation}deg)`;
 
         if (bullPercent >= 75) {
-            dom.gaugeLabel.textContent = 'STRONG BUY';
+            dom.gaugeLabel.textContent = 'SANGAT OPTIMIS';
             dom.gaugeLabel.style.color = 'var(--green)';
         } else if (bullPercent >= 58) {
-            dom.gaugeLabel.textContent = 'BULLISH';
+            dom.gaugeLabel.textContent = 'OPTIMIS (BULLISH)';
             dom.gaugeLabel.style.color = 'var(--green)';
         } else if (bullPercent <= 25) {
-            dom.gaugeLabel.textContent = 'STRONG SELL';
+            dom.gaugeLabel.textContent = 'SANGAT PESIMIS';
             dom.gaugeLabel.style.color = 'var(--red)';
         } else if (bullPercent <= 42) {
-            dom.gaugeLabel.textContent = 'BEARISH';
+            dom.gaugeLabel.textContent = 'PESIMIS (BEARISH)';
             dom.gaugeLabel.style.color = 'var(--red)';
         } else {
-            dom.gaugeLabel.textContent = 'NEUTRAL';
+            dom.gaugeLabel.textContent = 'NETRAL';
             dom.gaugeLabel.style.color = 'var(--gold)';
         }
     }
@@ -201,7 +201,7 @@
         const keyEvents = list.slice(0, 10);
         
         if (!keyEvents.length) {
-            dom.alertsBody.innerHTML = '<div class="ticker-alert-item">No alerts in this segment</div>';
+            dom.alertsBody.innerHTML = '<div class="ticker-alert-item">Tidak ada alarm di segmen ini</div>';
             return;
         }
 
@@ -218,8 +218,8 @@
         if (!list.length) {
             dom.newsGrid.innerHTML = `<div class="no-results">
                 <div class="no-results-icon">🔍</div>
-                <div class="no-results-text">No articles found in this segment</div>
-                <div class="no-results-sub">Try another category or search term</div>
+                <div class="no-results-text">Tidak ada berita ditemukan di segmen ini</div>
+                <div class="no-results-sub">Coba kategori lain atau kata kunci pencarian yang berbeda</div>
             </div>`;
             dom.loadWrap.style.display = 'none';
             return;
@@ -235,13 +235,20 @@
 
         const visible = list.slice(0, shown);
 
+        const sentimentMap = {
+            bullish: 'BULLISH',
+            bearish: 'BEARISH',
+            neutral: 'NETRAL'
+        };
+
         dom.newsGrid.innerHTML = visible.map((a, i) => {
-            const sTag = a.sentiment !== 'neutral' ? `<span class="s-tag ${a.sentiment}">${a.sentiment.toUpperCase()}</span>` : '';
+            const sTagText = sentimentMap[a.sentiment] || a.sentiment.toUpperCase();
+            const sTag = a.sentiment !== 'neutral' ? `<span class="s-tag ${a.sentiment}">${sTagText}</span>` : '';
             
             // Build triggers list
             const triggerHtml = a.triggers.length > 0 
                 ? a.triggers.map(t => `<span class="trigger-word">${escHtml(t)}</span>`).join('')
-                : '<span class="trigger-word" style="color:var(--text-muted)">None</span>';
+                : '<span class="trigger-word" style="color:var(--text-muted)">Tidak ada</span>';
 
             // Clean combined text to send to feedback endpoint
             const combinedText = `${a.title} ${a.desc}`.replace(/"/g, '&quot;');
@@ -264,24 +271,24 @@
                     <!-- AI Explainability details -->
                     <div class="card-ai-details">
                         <div class="ai-confidence">
-                            <span class="trigger-label">AI Decision</span>
+                            <span class="trigger-label">Keputusan AI</span>
                             <span class="confidence-val ${a.sentiment}">
-                                ${a.confidence}% ${a.sentiment.toUpperCase()}
+                                ${a.confidence}% ${sTagText}
                             </span>
                         </div>
                         <div class="ai-triggers">
-                            <span class="trigger-label">Triggers:</span>
+                            <span class="trigger-label">Pemicu:</span>
                             ${triggerHtml}
                         </div>
                     </div>
 
                     <!-- Interactive Feedback Panel -->
                     <div class="feedback-panel">
-                        <span class="feedback-title">Correct AI Sentiment?</span>
+                        <span class="feedback-title">Koreksi Sentimen AI?</span>
                         <div class="feedback-actions">
-                            <button class="correct-btn bull" onclick="sendAIFeedback('${combinedText}', 'bullish', this)">Bull</button>
-                            <button class="correct-btn neu" onclick="sendAIFeedback('${combinedText}', 'neutral', this)">Neu</button>
-                            <button class="correct-btn bear" onclick="sendAIFeedback('${combinedText}', 'bearish', this)">Bear</button>
+                            <button class="correct-btn bull" onclick="sendAIFeedback('${combinedText}', 'bullish', this)">Naik</button>
+                            <button class="correct-btn neu" onclick="sendAIFeedback('${combinedText}', 'neutral', this)">Netral</button>
+                            <button class="correct-btn bear" onclick="sendAIFeedback('${combinedText}', 'bearish', this)">Turun</button>
                         </div>
                     </div>
 
@@ -302,7 +309,7 @@
     function renderSources() {
         const names = [...new Set(articles.map(a => a.source))].sort();
         dom.sourcePills.innerHTML =
-            `<button class="source-pill ${activeSource === 'all' ? 'active' : ''}" data-src="all">All Sources</button>` +
+            `<button class="source-pill ${activeSource === 'all' ? 'active' : ''}" data-src="all">Semua Sumber</button>` +
             names.map(n =>
                 `<button class="source-pill ${activeSource === n ? 'active' : ''}" data-src="${escHtml(n)}">${escHtml(n)}</button>`
             ).join('');
@@ -485,7 +492,7 @@
             await loadModelStats();
             dom.lastUpdated.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         } catch (_) {
-            showError('Network error connecting to Edsans Python server. Is server.py running?');
+            showError('Kesalahan jaringan saat menghubungkan ke server Python Edsans. Apakah server.py berjalan?');
         } finally {
             isFetching = false;
             dom.refreshBtn.classList.remove('spinning');

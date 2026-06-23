@@ -1,6 +1,9 @@
 import os
 import sqlite3
 import urllib.request
+import urllib.parse
+import json
+import hashlib
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from flask import Flask, jsonify, request
@@ -44,6 +47,112 @@ IMAGE_CACHE = {}
 # Thread pool for parallel scraping (improves feed response speed by 500%)
 executor = ThreadPoolExecutor(max_workers=12)
 
+# Translation dictionary to map English triggers to Indonesian
+TRIGGER_MAP = {
+    'surge': 'lonjakan',
+    'rally': 'reli',
+    'gain': 'kenaikan',
+    'jump': 'melonjak',
+    'rebound': 'rebound',
+    'profit': 'keuntungan',
+    'growth': 'pertumbuhan',
+    'bullish': 'bullish',
+    'up': 'naik',
+    'higher': 'lebih tinggi',
+    'beat': 'melampaui',
+    'expansion': 'ekspansi',
+    'positive': 'positif',
+    'recovery': 'pemulihan',
+    'boost': 'dorongan',
+    'strengthens': 'menguat',
+    'optimism': 'optimisme',
+    'advance': 'kemajuan',
+    'climbs': 'naik',
+    'highs': 'tinggi',
+    
+    'plunge': 'anjlok',
+    'slump': 'merosot',
+    'drop': 'turun',
+    'fall': 'jatuh',
+    'loss': 'kerugian',
+    'recession': 'resesi',
+    'bearish': 'bearish',
+    'down': 'turun',
+    'lower': 'lebih rendah',
+    'miss': 'meleset',
+    'contraction': 'kontraksi',
+    'negative': 'negatif',
+    'fear': 'ketakutan',
+    'panic': 'kepanikan',
+    'crash': 'jatuh',
+    'weakens': 'melemah',
+    'slips': 'tergelincir',
+    'worries': 'kekhawatiran',
+    'debt': 'utang',
+    'hit': 'terpukul'
+}
+
+def get_translation_hash(text):
+    return hashlib.md5(text.strip().encode('utf-8')).hexdigest()
+
+def get_cached_translation(text):
+    if not text:
+        return ""
+    text_hash = get_translation_hash(text)
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute('SELECT translated_text FROM translations WHERE text_hash = ?', (text_hash,))
+        row = c.fetchone()
+        conn.close()
+        if row:
+            return row[0]
+    except Exception as e:
+        print(f"Error reading translation cache: {e}")
+    return None
+
+def set_cached_translation(text, translated_text):
+    if not text or not translated_text:
+        return
+    text_hash = get_translation_hash(text)
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute('''
+            INSERT INTO translations (text_hash, translated_text) 
+            VALUES (?, ?)
+            ON CONFLICT(text_hash) DO UPDATE SET translated_text = excluded.translated_text
+        ''', (text_hash, translated_text))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(f"Error writing translation cache: {e}")
+
+def translate_to_id(text):
+    if not text or not text.strip():
+        return ""
+    
+    cached = get_cached_translation(text)
+    if cached:
+        return cached
+        
+    try:
+        url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=id&dt=t&q=" + urllib.parse.quote(text)
+        req = urllib.request.Request(
+            url,
+            headers={'User-Agent': 'Mozilla/5.0'}
+        )
+        with urllib.request.urlopen(req, timeout=5) as response:
+            data = json.loads(response.read().decode('utf-8'))
+            translated_text = "".join([segment[0] for segment in data[0] if segment[0]])
+            if translated_text:
+                set_cached_translation(text, translated_text)
+                return translated_text
+    except Exception as e:
+        print(f"Translation error for text '{text[:30]}...': {e}")
+    
+    return text
+
 # =====================================================================
 # DATABASE SETUP
 # =====================================================================
@@ -56,6 +165,12 @@ def init_db():
             text TEXT UNIQUE,
             label TEXT,
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS translations (
+            text_hash TEXT PRIMARY KEY,
+            translated_text TEXT
         )
     ''')
     conn.commit()
@@ -261,6 +376,7 @@ def get_news():
         confidence = float(probs[pred_idx])
         
         triggers = extract_trigger_words(combined_text)
+        translated_triggers = [TRIGGER_MAP.get(t, t) for t in triggers]
         
         # Keyword category expansions
         text_to_test = combined_text.lower()
@@ -279,9 +395,28 @@ def get_news():
             "source": a["source"],
             "sentiment": predicted_label,
             "confidence": round(confidence * 100, 1),
-            "triggers": triggers,
+            "triggers": translated_triggers,
             "cats": assigned_cats
         })
+
+    # Submit translations to ThreadPoolExecutor
+    for a in processed_articles:
+        a["title_future"] = executor.submit(translate_to_id, a["title"])
+        a["desc_future"] = executor.submit(translate_to_id, a["desc"])
+
+    # Wait for translation results
+    for a in processed_articles:
+        try:
+            a["title"] = a["title_future"].result(timeout=4)
+        except Exception as e:
+            print(f"Error getting title translation: {e}")
+        try:
+            a["desc"] = a["desc_future"].result(timeout=4)
+        except Exception as e:
+            print(f"Error getting desc translation: {e}")
+            
+        del a["title_future"]
+        del a["desc_future"]
 
     def parse_date(date_str):
         try:
