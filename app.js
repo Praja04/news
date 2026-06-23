@@ -504,6 +504,48 @@
         dom.errorBanner.style.display = '';
     }
 
+    function initLiveTV() {
+        const video = $('liveTvPlayer');
+        if (!video) return;
+        const videoSrc = 'https://live.cnbcindonesia.com/livecnbc/smil:cnbctv.smil/master.m3u8';
+        
+        if (typeof Hls !== 'undefined' && Hls.isSupported()) {
+            const hls = new Hls({
+                maxMaxBufferLength: 10,
+                enableWorker: true
+            });
+            hls.loadSource(videoSrc);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                video.play().catch(() => {
+                    console.log("Autoplay blocked, waiting for interaction");
+                });
+            });
+            hls.on(Hls.Events.ERROR, function(event, data) {
+                if (data.fatal) {
+                    switch (data.type) {
+                        case Hls.ErrorTypes.NETWORK_ERROR:
+                            console.log("fatal network error encountered, try to recover");
+                            hls.startLoad();
+                            break;
+                        case Hls.ErrorTypes.MEDIA_ERROR:
+                            console.log("fatal media error encountered, try to recover");
+                            hls.recoverMediaError();
+                            break;
+                        default:
+                            console.log("fatal error, cannot recover");
+                            break;
+                    }
+                }
+            });
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = videoSrc;
+            video.addEventListener('canplay', function() {
+                video.play().catch(() => {});
+            });
+        }
+    }
+
     /* =============================================
        INIT
        ============================================= */
@@ -511,6 +553,7 @@
         dom.dateEl.textContent = fmtDate();
         initTicker();
         bindEvents();
+        initLiveTV();
         await refresh();
 
         // Auto-refresh every 5 minutes

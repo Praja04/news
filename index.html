@@ -175,14 +175,7 @@
                         </div>
                     </div>
                     <div class="live-tv-container">
-                        <iframe 
-                            class="live-tv-player"
-                            src="https://www.youtube.com/embed/live_stream?channel=UCN31H-5xGk52z1L-O5H570Q" 
-                            title="CNBC Indonesia Live" 
-                            frameborder="0" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                            allowfullscreen>
-                        </iframe>
+                        <video id="liveTvPlayer" class="live-tv-player" controls autoplay muted playsinline></video>
                     </div>
                 </div>
 
@@ -243,6 +236,7 @@
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0/dist/hls.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
