@@ -186,14 +186,67 @@
                     </div>
                 </div>
 
-                <!-- Alarm Pasar (Market Alerts) -->
-                <div class="widget-box hl-ticker-widget">
+                <!-- XEDY V10 — XAUUSD Intelligence Panel -->
+                <div class="widget-box xedy-widget" id="xedyWidget">
                     <div class="widget-header">
-                        <h3>Alarm Pasar</h3>
-                        <span class="widget-badge">LANGSUNG</span>
+                        <h3>XEDY V10 — XAUUSD</h3>
+                        <div class="live-status">
+                            <span class="pulse-dot"></span>
+                            <span class="live-label">INTELIJEN</span>
+                        </div>
                     </div>
-                    <div class="hl-ticker-body" id="breakingAlertsBody">
-                        <div class="ticker-alert-item">Menunggu alarm...</div>
+                    <div class="xedy-body" id="xedyBody">
+                        <!-- Bias & Confidence -->
+                        <div class="xedy-bias-row">
+                            <div class="xedy-bias-box" id="xedyBiasBox">
+                                <span class="xedy-bias-label">BIAS</span>
+                                <span class="xedy-bias-value" id="xedyBias">—</span>
+                            </div>
+                            <div class="xedy-confidence-box">
+                                <span class="xedy-conf-label">CONFIDENCE</span>
+                                <div class="xedy-conf-bar-wrap">
+                                    <div class="xedy-conf-bar" id="xedyConfBar" style="width:0%"></div>
+                                </div>
+                                <span class="xedy-conf-value" id="xedyConf">—</span>
+                            </div>
+                        </div>
+
+                        <!-- Risk Assessment -->
+                        <div class="xedy-risk-row">
+                            <span class="xedy-risk-label">RISK</span>
+                            <span class="xedy-risk-badge" id="xedyRisk">—</span>
+                        </div>
+
+                        <!-- Key Levels -->
+                        <div class="xedy-levels" id="xedyLevels">
+                            <div class="xedy-level-col">
+                                <span class="xedy-level-title support">SUPPORT</span>
+                                <div class="xedy-level-values" id="xedySupport">—</div>
+                            </div>
+                            <div class="xedy-level-col">
+                                <span class="xedy-level-title resistance">RESISTANCE</span>
+                                <div class="xedy-level-values" id="xedyResistance">—</div>
+                            </div>
+                        </div>
+
+                        <!-- Triggers -->
+                        <div class="xedy-triggers-wrap">
+                            <span class="xedy-section-label">PEMICU UTAMA</span>
+                            <div class="xedy-triggers" id="xedyTriggers">
+                                <span class="xedy-trigger-tag">Menunggu analisis...</span>
+                            </div>
+                        </div>
+
+                        <!-- Summary -->
+                        <div class="xedy-summary-wrap">
+                            <span class="xedy-section-label">RINGKASAN ANALISIS</span>
+                            <p class="xedy-summary" id="xedySummary">Belum ada laporan XEDY V10. Kirim analisis terlebih dahulu.</p>
+                        </div>
+
+                        <!-- Timestamp -->
+                        <div class="xedy-footer">
+                            <span class="xedy-timestamp" id="xedyTimestamp">—</span>
+                        </div>
                     </div>
                 </div>
             </aside>

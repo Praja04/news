@@ -173,6 +173,13 @@ def init_db():
             translated_text TEXT
         )
     ''')
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS xedy_reports (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            report_json TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
     conn.commit()
     conn.close()
 
@@ -480,6 +487,46 @@ def get_stats():
             "vocab_features": int(vectorizer.n_features),
             "model_algorithm": "SGDClassifier (Online Linear Model)"
         })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+# =====================================================================
+# XEDY V10 — XAUUSD Institutional Intelligence Engine
+# =====================================================================
+@app.route('/api/xedy', methods=['POST'])
+def post_xedy_report():
+    """Receive XEDY V10 analysis report and store in database."""
+    data = request.json
+    if not data:
+        return jsonify({"status": "error", "message": "No JSON body provided"}), 400
+    
+    try:
+        report_json = json.dumps(data, ensure_ascii=False)
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute('INSERT INTO xedy_reports (report_json) VALUES (?)', (report_json,))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success", "message": "XEDY V10 report saved successfully."})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/api/xedy', methods=['GET'])
+def get_xedy_report():
+    """Return the latest XEDY V10 analysis report."""
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute('SELECT report_json, created_at FROM xedy_reports ORDER BY id DESC LIMIT 1')
+        row = c.fetchone()
+        conn.close()
+        
+        if row:
+            report = json.loads(row[0])
+            report['_stored_at'] = row[1]
+            return jsonify(report)
+        else:
+            return jsonify({"status": "empty", "message": "Belum ada laporan XEDY V10. Kirim analisis terlebih dahulu."})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 

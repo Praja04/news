@@ -63,7 +63,18 @@
         bearPct       : $('bearPct'),
         bullFill      : $('bullFill'),
         analyzedCount : $('analyzedCount'),
-        alertsBody    : $('breakingAlertsBody'),
+
+        // XEDY V10 UI
+        xedyBias      : $('xedyBias'),
+        xedyBiasBox   : $('xedyBiasBox'),
+        xedyConf      : $('xedyConf'),
+        xedyConfBar   : $('xedyConfBar'),
+        xedyRisk      : $('xedyRisk'),
+        xedySupport   : $('xedySupport'),
+        xedyResistance: $('xedyResistance'),
+        xedyTriggers  : $('xedyTriggers'),
+        xedySummary   : $('xedySummary'),
+        xedyTimestamp : $('xedyTimestamp'),
 
         // AI Stats UI
         modelAlgo     : $('modelAlgo'),
@@ -196,21 +207,69 @@
         }
     }
 
-    // --- Market Alerts Feed ---
-    function renderAlerts(list) {
-        const keyEvents = list.slice(0, 10);
-        
-        if (!keyEvents.length) {
-            dom.alertsBody.innerHTML = '<div class="ticker-alert-item">Tidak ada alarm di segmen ini</div>';
-            return;
-        }
+    // --- XEDY V10 Intelligence Report ---
+    async function loadXedyReport() {
+        try {
+            const res = await fetch(`${API_BASE}/xedy`);
+            const data = await res.json();
 
-        dom.alertsBody.innerHTML = keyEvents.map(a => `
-            <div class="ticker-alert-item ${a.sentiment}">
-                <strong>${escHtml(a.source)}:</strong> ${escHtml(a.title)}
-                <span class="alert-time">${timeAgo(a.pubDate)}</span>
-            </div>
-        `).join('');
+            if (data.status === 'empty') {
+                // No report yet — show placeholder
+                dom.xedySummary.textContent = data.message || 'Belum ada laporan.';
+                return;
+            }
+
+            // Bias
+            const bias = (data.bias || '—').toUpperCase();
+            dom.xedyBias.textContent = bias;
+            dom.xedyBiasBox.className = 'xedy-bias-box';
+            if (/BUY|BULLISH|LONG/i.test(bias)) dom.xedyBiasBox.classList.add('bullish');
+            else if (/SELL|BEARISH|SHORT/i.test(bias)) dom.xedyBiasBox.classList.add('bearish');
+            else dom.xedyBiasBox.classList.add('neutral');
+
+            // Confidence
+            const conf = data.confidence || data.confidence_score || 0;
+            dom.xedyConf.textContent = `${conf}%`;
+            dom.xedyConfBar.style.width = `${Math.min(conf, 100)}%`;
+            if (conf >= 70) dom.xedyConfBar.style.background = 'var(--green)';
+            else if (conf >= 40) dom.xedyConfBar.style.background = 'var(--gold)';
+            else dom.xedyConfBar.style.background = 'var(--red)';
+
+            // Risk
+            const risk = (data.risk || data.risk_assessment || '—').toUpperCase();
+            dom.xedyRisk.textContent = risk;
+            dom.xedyRisk.className = 'xedy-risk-badge';
+            if (/HIGH|TINGGI/i.test(risk)) dom.xedyRisk.classList.add('high');
+            else if (/MEDIUM|SEDANG/i.test(risk)) dom.xedyRisk.classList.add('medium');
+            else if (/LOW|RENDAH/i.test(risk)) dom.xedyRisk.classList.add('low');
+
+            // Key Levels
+            if (data.key_levels) {
+                const sup = data.key_levels.support || data.key_levels.Support || [];
+                const res2 = data.key_levels.resistance || data.key_levels.Resistance || [];
+                dom.xedySupport.innerHTML = (Array.isArray(sup) ? sup : [sup]).map(v => `<span class="xedy-level-val">${v}</span>`).join('');
+                dom.xedyResistance.innerHTML = (Array.isArray(res2) ? res2 : [res2]).map(v => `<span class="xedy-level-val">${v}</span>`).join('');
+            }
+
+            // Triggers
+            const triggers = data.triggers || data.pemicu || [];
+            if (Array.isArray(triggers) && triggers.length > 0) {
+                dom.xedyTriggers.innerHTML = triggers.map(t => `<span class="xedy-trigger-tag">${escHtml(typeof t === 'string' ? t : t.name || t.trigger || JSON.stringify(t))}</span>`).join('');
+            }
+
+            // Summary
+            const summary = data.summary || data.ringkasan || data.narrative || '';
+            dom.xedySummary.textContent = summary || '—';
+
+            // Timestamp
+            const ts = data.timestamp || data._stored_at || '';
+            if (ts) {
+                const d = new Date(ts);
+                dom.xedyTimestamp.textContent = `Terakhir diperbarui: ${isNaN(d) ? ts : d.toLocaleString('id-ID', {day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'})}`;
+            }
+        } catch (err) {
+            console.error('Failed to load XEDY report:', err);
+        }
     }
 
     // --- News Cards Grid ---
@@ -371,7 +430,6 @@
         });
 
         updateSentimentWidget(filtered);
-        renderAlerts(filtered);
         renderGrid(filtered);
     }
 
@@ -512,11 +570,17 @@
         initTicker();
         bindEvents();
         await refresh();
+        await loadXedyReport();
 
         // Auto-refresh every 5 minutes
         setInterval(() => {
             if (!isFetching) refresh();
         }, REFRESH_MS);
+
+        // Refresh XEDY report every 10 minutes
+        setInterval(() => {
+            loadXedyReport();
+        }, 10 * 60 * 1000);
     }
 
     if (document.readyState === 'loading') {
