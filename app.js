@@ -560,14 +560,13 @@
         const grid = document.getElementById('forecastCardsGrid');
         if (!grid) return;
 
-        grid.innerHTML = FORECAST_CARDS.map((item, index) => {
+        const cards = FORECAST_CARDS.map((item, index) => {
             const isBullish = item.bias === 'BULLISH';
             const badgeClass = isBullish ? 'bullish' : 'bearish';
             const glowClass = isBullish ? 'bullish-glow' : 'bearish-glow';
-            const spanClass = (index === FORECAST_CARDS.length - 1 && FORECAST_CARDS.length % 2 !== 0) ? 'span-2' : '';
-            
+
             return `
-                <div class="forecast-card ${glowClass} ${spanClass}">
+                <div class="forecast-card ${glowClass}">
                     <div class="forecast-card-header">
                         <span class="forecast-card-pair">${item.pair}</span>
                         <span class="forecast-badge ${badgeClass}">${item.bias}</span>
@@ -597,7 +596,44 @@
                 </div>
             `;
         }).join('');
+
+        // 6th slot: TradingView Market Quotes widget (real-time prices for 5 pairs)
+        const tvWidget = `
+            <div class="forecast-card tv-quotes-card">
+                <div class="forecast-card-header">
+                    <span class="forecast-card-pair" style="font-size:10px; letter-spacing:0.06em;">HARGA REAL-TIME</span>
+                    <span class="tv-live-badge"><span class="pulse-dot" style="width:6px;height:6px;"></span> LIVE</span>
+                </div>
+                <div class="tv-quotes-wrap">
+                    <div class="tradingview-widget-container" style="height:100%;width:100%;">
+                        <div class="tradingview-widget-container__widget" style="height:100%;width:100%;"></div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
+                        {
+                          "title": "",
+                          "symbols": [
+                            ["Gold", "OANDA:XAUUSD|1D"],
+                            ["USD/JPY", "OANDA:USDJPY|1D"],
+                            ["WTI Oil", "TVC:USOIL|1D"],
+                            ["EUR/USD", "OANDA:EURUSD|1D"],
+                            ["GBP/USD", "OANDA:GBPUSD|1D"],
+                            ["Dow Jones", "FOREXCOM:DJI|1D"]
+                          ],
+                          "showSymbolLogo": false,
+                          "isTransparent": true,
+                          "colorTheme": "dark",
+                          "locale": "en",
+                          "width": "100%",
+                          "height": "100%"
+                        }
+                        </script>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        grid.innerHTML = cards + tvWidget;
     }
+
 
     const TRANSCRIPT_LINES = [
         "Selamat pagi pemirsa, kembali lagi di live streaming program Squawk Box CNBC Indonesia.",

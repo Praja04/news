@@ -1557,13 +1557,14 @@ img { max-width: 100%; display: block; }
 
 .forecast-cards-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 12px;
     flex-grow: 1;
 }
 
 @media (max-width: 1080px) {
     .forecast-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
         max-height: none;
     }
 }
@@ -1607,6 +1608,50 @@ img { max-width: 100%; display: block; }
     box-shadow: 0 4px 20px rgba(16, 185, 129, 0.08);
     border-color: rgba(16, 185, 129, 0.2);
 }
+
+/* TradingView real-time quotes card (6th slot) */
+.forecast-card.tv-quotes-card {
+    padding: 10px 12px 0;
+    overflow: hidden;
+    gap: 6px;
+    border-color: rgba(96, 165, 250, 0.15);
+    background: rgba(96, 165, 250, 0.03);
+}
+
+.forecast-card.tv-quotes-card:hover {
+    border-color: rgba(96, 165, 250, 0.3);
+    box-shadow: 0 4px 20px rgba(96, 165, 250, 0.08);
+}
+
+.tv-quotes-wrap {
+    flex-grow: 1;
+    overflow: hidden;
+    min-height: 0;
+    margin: 0 -12px;
+}
+
+.tv-quotes-wrap .tradingview-widget-container,
+.tv-quotes-wrap .tradingview-widget-container__widget {
+    height: 100% !important;
+    min-height: 200px;
+}
+
+.tv-live-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 8.5px;
+    font-weight: 700;
+    color: #60a5fa;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+/* Remove TV copyright bar inside quotes card */
+.tv-quotes-wrap .tradingview-widget-copyright {
+    display: none !important;
+}
+
 
 .forecast-card-header {
     display: flex;
