@@ -70,7 +70,8 @@
         distBear      : $('distBear'),
         lblBullCount  : $('lblBullCount'),
         lblNeuCount   : $('lblNeuCount'),
-        lblBearCount  : $('lblBearCount')
+        lblBearCount  : $('lblBearCount'),
+        priceRows     : $('priceRows')
     };
 
     /* =============================================
@@ -603,6 +604,31 @@
         }
     }
 
+    async function loadLivePrices() {
+        if (!dom.priceRows) return;
+        try {
+            const res = await fetch(`${API_BASE}/prices`);
+            if (!res.ok) throw new Error(`HTTP status ${res.status}`);
+            const data = await res.json();
+            
+            dom.priceRows.innerHTML = data.map(item => {
+                const formattedPrice = item.price !== null ? item.price.toLocaleString('en-US', {
+                    minimumFractionDigits: item.digits,
+                    maximumFractionDigits: item.digits
+                }) : '—';
+                
+                return `
+                    <div class="price-row">
+                        <span class="price-row-name">${escHtml(item.label)}</span>
+                        <span class="price-row-value">${formattedPrice}</span>
+                    </div>
+                `;
+            }).join('');
+        } catch (err) {
+            console.error('Failed to load live prices:', err);
+        }
+    }
+
 
 
     const TRANSCRIPT_LINES = [
@@ -679,12 +705,16 @@
         await refresh();
         await loadXedyReport();
         renderForecastCards();
+        await loadLivePrices();
         initSpeechToText();
 
         // Auto-refresh every 5 minutes
         setInterval(() => {
             if (!isFetching) refresh();
         }, REFRESH_MS);
+
+        // Refresh prices every 10 seconds
+        setInterval(loadLivePrices, 10 * 1000);
 
         // Refresh XEDY report every 10 minutes
         setInterval(() => {

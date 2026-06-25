@@ -530,6 +530,95 @@ def get_xedy_report():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+
+# =====================================================================
+# LIVE PRICES — TradingView Scanner API (free, reliable, no cookies/crumbs)
+# =====================================================================
+PRICE_SYMBOLS = [
+    {"symbol": "OANDA:XAUUSD",   "label": "GOLD (XAU/USD)",  "digits": 2, "backups": ["FX_IDC:XAUUSD", "TVC:GOLD"]},
+    {"symbol": "OANDA:USDJPY",   "label": "USD/JPY",          "digits": 3, "backups": ["FX_IDC:USDJPY"]},
+    {"symbol": "TVC:USOIL",      "label": "WTI OIL",          "digits": 2, "backups": ["OANDA:WTICOUSD", "CAPITALCOM:USOIL"]},
+    {"symbol": "OANDA:EURUSD",   "label": "EUR/USD",          "digits": 5, "backups": ["FX_IDC:EURUSD"]},
+    {"symbol": "OANDA:GBPUSD",   "label": "GBP/USD",          "digits": 5, "backups": ["FX_IDC:GBPUSD"]},
+    {"symbol": "FOREXCOM:DJI",   "label": "DOW JONES",        "digits": 2, "backups": ["OANDA:US30USD", "CAPITALCOM:US30"]},
+]
+
+_prices_cache = {"data": [], "ts": 0}
+
+@app.route('/api/prices', methods=['GET'])
+def get_prices():
+    import time
+    now = time.time()
+    # Cache for 5 seconds
+    if now - _prices_cache["ts"] < 5 and _prices_cache["data"]:
+        return jsonify(_prices_cache["data"])
+
+    # Collect all unique tickers (mains and backups) to query
+    all_tickers = []
+    for s in PRICE_SYMBOLS:
+        all_tickers.append(s["symbol"])
+        all_tickers.extend(s.get("backups", []))
+    all_tickers = list(set(all_tickers))
+
+    price_map = {}
+    
+    # Query both global (for forex/gold) and cfd (for indices/oil) TradingView scanners
+    scanners = [
+        "https://scanner.tradingview.com/global/scan",
+        "https://scanner.tradingview.com/cfd/scan"
+    ]
+    
+    for url in scanners:
+        payload = {
+            "symbols": {
+                "tickers": all_tickers
+            },
+            "columns": ["close"]
+        }
+        try:
+            req = urllib.request.Request(
+                url,
+                data=json.dumps(payload).encode("utf-8"),
+                headers={
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                    "Content-Type": "application/json"
+                },
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                raw = json.loads(resp.read().decode("utf-8"))
+                for item in raw.get("data", []):
+                    sym = item.get("s")
+                    close_val = item.get("d", [None])[0]
+                    if sym and close_val is not None:
+                        price_map[sym] = close_val
+        except Exception as e:
+            print(f"[prices] TradingView fetch error on {url}: {e}")
+
+    result = []
+    for s in PRICE_SYMBOLS:
+        # 1. Try main symbol
+        price = price_map.get(s["symbol"])
+        
+        # 2. Try backups if main symbol is not found
+        if price is None:
+            for backup_sym in s.get("backups", []):
+                price = price_map.get(backup_sym)
+                if price is not None:
+                    break
+        
+        result.append({
+            "label":  s["label"],
+            "symbol": s["symbol"],
+            "price":  round(price, s["digits"]) if price is not None else None,
+            "digits": s["digits"],
+        })
+
+    _prices_cache["data"] = result
+    _prices_cache["ts"]   = now
+    return jsonify(result)
+
+
 if __name__ == '__main__':
     init_db()
     init_model()

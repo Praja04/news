@@ -133,7 +133,7 @@
                     <div class="forecast-cards-grid" id="forecastCardsGrid">
                         <!-- 5 forecast cards populated dynamically from JS -->
 
-                        <!-- 6th slot: TradingView Real-Time Quotes (static so script executes) -->
+                        <!-- 6th slot: Real-Time Prices (custom, price only) -->
                         <div class="forecast-card tv-quotes-card" id="tvQuotesCard">
                             <div class="forecast-card-header">
                                 <span class="forecast-card-pair" style="font-size:10px;letter-spacing:0.06em;">HARGA REAL-TIME</span>
@@ -141,29 +141,17 @@
                                     <span class="pulse-dot" style="width:6px;height:6px;"></span> LIVE
                                 </span>
                             </div>
-                            <div class="tv-quotes-wrap">
-                                <div class="tradingview-widget-container" style="width:100%;height:100%;">
-                                    <div class="tradingview-widget-container__widget" style="width:100%;height:100%;"></div>
-                                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
-                                    {
-                                      "title": "",
-                                      "symbols": [
-                                        ["Gold",      "OANDA:XAUUSD|1D"],
-                                        ["USD/JPY",   "OANDA:USDJPY|1D"],
-                                        ["WTI Oil",   "TVC:USOIL|1D"],
-                                        ["EUR/USD",   "OANDA:EURUSD|1D"],
-                                        ["GBP/USD",   "OANDA:GBPUSD|1D"],
-                                        ["Dow Jones", "FOREXCOM:DJI|1D"]
-                                      ],
-                                      "showSymbolLogo": false,
-                                      "isTransparent": true,
-                                      "colorTheme": "dark",
-                                      "locale": "en",
-                                      "width": "100%",
-                                      "height": "100%"
-                                    }
-                                    </script>
-                                </div>
+                            <div class="price-header-row">
+                                <span>Name</span>
+                                <span>Value</span>
+                            </div>
+                            <div class="price-rows" id="priceRows">
+                                <div class="price-row-skeleton"></div>
+                                <div class="price-row-skeleton"></div>
+                                <div class="price-row-skeleton"></div>
+                                <div class="price-row-skeleton"></div>
+                                <div class="price-row-skeleton"></div>
+                                <div class="price-row-skeleton"></div>
                             </div>
                         </div>
                     </div>
