@@ -8,20 +8,6 @@
     const REFRESH_MS = 5 * 60 * 1000; // 5 min auto-refresh
     const PER_PAGE = 16;
 
-    /* =============================================
-       REALTIME TICKER DATA
-       ============================================= */
-    const MARKET_DATA = [
-        { name: 'EUR/USD',   price: 1.0842,  change: 0.12,  type: 'forex',       digits: 4 },
-        { name: 'GBP/USD',   price: 1.2718,  change: -0.05, type: 'forex',       digits: 4 },
-        { name: 'USD/JPY',   price: 156.42,  change: 0.31,  type: 'forex',       digits: 2 },
-        { name: 'AUD/USD',   price: 0.6651,  change: 0.08,  type: 'forex',       digits: 4 },
-        { name: 'Gold (XAU)',price: 2335.80, change: 0.74,  type: 'commodity',   digits: 2 },
-        { name: 'Brent Oil', price: 82.45,   change: -1.15, type: 'commodity',   digits: 2 },
-        { name: 'S&P 500',   price: 5432.80, change: 0.25,  type: 'index',       digits: 1 },
-        { name: 'Nasdaq',    price: 19659.1, change: 0.54,  type: 'index',       digits: 1 },
-        { name: 'BTC/USD',   price: 66420.0, change: -0.82, type: 'crypto',      digits: 0 }
-    ];
 
     /* =============================================
        STATE
@@ -41,7 +27,6 @@
 
     const dom = {
         newsGrid    : $('newsGrid'),
-        tickerWrap  : $('tickerWrapper'),
         nav         : $('mainNav'),
         search      : $('searchInput'),
         sourceBar   : $('sourceBar'),
@@ -122,39 +107,7 @@
         });
     }
 
-    /* =============================================
-       REALTIME MARKET RATE SIMULATOR
-       ============================================= */
-    function initTicker() {
-        renderTicker();
-        setInterval(() => {
-            MARKET_DATA.forEach(asset => {
-                const percent = (Math.random() * 0.1 - 0.05) / 100;
-                asset.price += asset.price * percent;
-                asset.change += percent * 100;
-            });
-            renderTicker();
-        }, 3000);
-    }
 
-    function renderTicker() {
-        const items = [...MARKET_DATA, ...MARKET_DATA, ...MARKET_DATA];
-        dom.tickerWrap.innerHTML = items.map(asset => {
-            const changeSign = asset.change >= 0 ? '+' : '';
-            const changeClass = asset.change >= 0 ? 'up' : 'down';
-            return `
-                <div class="ticker-item">
-                    <span class="ticker-name">${asset.name}</span>
-                    <span class="ticker-price">${asset.price.toFixed(asset.digits)}</span>
-                    <span class="ticker-change ${changeClass}">${changeSign}${asset.change.toFixed(2)}%</span>
-                </div>
-            `;
-        }).join('');
-    }
-
-    /* =============================================
-       RENDERING
-       ============================================= */
 
     // --- Market Sentiment Widget ---
     function updateSentimentWidget(list) {
@@ -647,60 +600,68 @@
     }
 
     const TRANSCRIPT_LINES = [
-        "CNBC INDONESIA: ...selamat pagi pemirsa, kembali lagi di live streaming program Squawk Box CNBC Indonesia...",
-        "CNBC INDONESIA: ...bersama saya hari ini, kita akan membahas pergerakan pasar komoditas yang cukup volatile...",
-        "CNBC INDONESIA: ...harga emas dunia terpantau di level $4,116 per troy ounce, mengalami pelemahan sebesar 1.86%...",
-        "CNBC INDONESIA: ...selisih yield obligasi US 10-Tahun yang berada di 4.51% meningkatkan opportunity cost emas...",
-        "CNBC INDONESIA: ...analis memperkirakan harga emas berisiko mendekati level support terdekat di $4,080...",
-        "CNBC INDONESIA: ...seperti rilis data yang kami terima, The Fed diperkirakan menahan suku bunga lebih lama...",
-        "CNBC INDONESIA: ...mari kita hubungkan langsung dengan pengamat pasar forex di bursa Tokyo...",
-        "CNBC INDONESIA: ...nilai tukar USD/JPY masih tertahan di atas level 161.71, memicu sinyal intervensi verbal dari MoF...",
-        "CNBC INDONESIA: ...Wakil Menteri Keuangan Jepang, Masato Katayama, menyatakan ketidaknyamanan terhadap spekulasi berlebih...",
-        "CNBC INDONESIA: ...posisi COT spekulatif untuk Yen menunjukkan posisi net-short mencapai level ekstrem 145.8K kontrak...",
-        "CNBC INDONESIA: ...banyak spekulan bersiap menghadapi potensi short squeeze mendadak jika intervensi dilakukan...",
-        "CNBC INDONESIA: ...di sisi lain, bursa saham wall street melemah menyusul pelemahan saham-saham teknologi raksasa...",
-        "CNBC INDONESIA: ...sentimen pasar komoditas minyak mentah WTI berada di kisaran $73.80 per barel...",
-        "CNBC INDONESIA: ...kesepakatan antara AS dan Iran memangkas premi risiko geopolitik secara signifikan di pasar energi...",
-        "CNBC INDONESIA: ...investor bersiap menghadapi rilis data inflasi PCE esok hari untuk melihat kejelasan kebijakan Fed...",
-        "CNBC INDONESIA: ...terima kasih, demikian laporan singkat pergerakan pasar hari ini. Kami kembali ke studio..."
+        "Selamat pagi pemirsa, kembali lagi di live streaming program Squawk Box CNBC Indonesia.",
+        "Bersama saya hari ini, kita akan membahas pergerakan pasar komoditas yang cukup volatile di tengah tekanan makro global.",
+        "Harga emas dunia terpantau di level empat ribu delapan dolar per troy ounce, mengalami pelemahan signifikan hampir dua persen.",
+        "Selisih yield obligasi US Sepuluh Tahun yang berada di empat koma empat lima persen meningkatkan opportunity cost emas secara substansial.",
+        "Analis memperkirakan harga emas berisiko mendekati level psikologis empat ribu dolar, level yang belum pernah diuji sejak awal kuartal ini.",
+        "The Fed di bawah kepemimpinan Chair Kevin Warsh diperkirakan mempertahankan sikap hawkish dan menghapus forward guidance.",
+        "Mari kita hubungkan langsung dengan pengamat pasar forex di bursa Tokyo untuk melihat dinamika Yen Jepang hari ini.",
+        "Nilai tukar USD/JPY masih tertahan di atas level seratus enam puluh satu, memicu sinyal intervensi verbal dari Kementerian Keuangan Jepang.",
+        "Wakil Menteri Keuangan Jepang, Masato Katayama, menyatakan ketidaknyamanan terhadap pergerakan spekulatif yang berlebihan pada yen.",
+        "Posisi COT spekulatif untuk Yen menunjukkan posisi net-short mendekati level ekstrem seratus empat puluh tiga ribu kontrak.",
+        "Banyak spekulan bersiap menghadapi potensi short squeeze mendadak apabila Kementerian Keuangan Jepang memutuskan intervensi langsung.",
+        "Di sisi lain, bursa saham Wall Street melemah menyusul aksi jual pada saham-saham teknologi raksasa.",
+        "Sentimen pasar komoditas minyak mentah WTI kini berada di kisaran tujuh puluh dolar per barel setelah deal AS Iran.",
+        "Kesepakatan antara Amerika Serikat dan Iran memangkas premi risiko geopolitik secara signifikan di pasar energi global.",
+        "Investor bersiap menghadapi rilis data inflasi PCE hari ini untuk melihat kejelasan arah kebijakan moneter Federal Reserve.",
+        "Terima kasih, demikian laporan singkat pergerakan pasar hari ini dari studio CNBC Indonesia. Kami akan terus mengikuti perkembangan."
     ];
 
     let transcriptIndex = 0;
+    let transcriptTyping = false;
+
     function initSpeechToText() {
         const scrollContainer = document.getElementById('transcriptScroll');
         if (!scrollContainer) return;
-
         scrollContainer.innerHTML = '';
 
-        addTranscriptLine("SISTEM: Menghubungkan ke audio stream CNBC Indonesia Live TV...");
-        
-        setTimeout(() => {
-            addTranscriptLine("SISTEM: Koneksi audio stabil. Memulai speech-to-text transkripsi...");
-        }, 1500);
-
-        setInterval(() => {
-            const line = TRANSCRIPT_LINES[transcriptIndex];
-            addTranscriptLine(line);
-            transcriptIndex = (transcriptIndex + 1) % TRANSCRIPT_LINES.length;
-        }, 8000);
+        // Start the first line after a brief pause
+        setTimeout(() => typeNextLine(), 800);
     }
 
-    function addTranscriptLine(text) {
+    function typeNextLine() {
         const scrollContainer = document.getElementById('transcriptScroll');
-        if (!scrollContainer) return;
+        if (!scrollContainer || transcriptTyping) return;
+
+        const text = TRANSCRIPT_LINES[transcriptIndex];
+        transcriptIndex = (transcriptIndex + 1) % TRANSCRIPT_LINES.length;
+
+        // Clear all previous lines — show only the current one
+        scrollContainer.innerHTML = '';
 
         const p = document.createElement('p');
         p.className = 'transcript-line live';
-        
-        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        p.innerHTML = `<span style="color: var(--text-muted); font-size: 10px;">[${timestamp}]</span> ${escHtml(text)}`;
-        
+        p.textContent = '';
         scrollContainer.appendChild(p);
-        scrollContainer.scrollTop = scrollContainer.scrollHeight;
-        
-        while (scrollContainer.children.length > 50) {
-            scrollContainer.removeChild(scrollContainer.firstChild);
-        }
+
+        transcriptTyping = true;
+        let charIndex = 0;
+        const speed = 38; // ms per character
+
+        const typeInterval = setInterval(() => {
+            if (charIndex < text.length) {
+                p.textContent += text[charIndex];
+                charIndex++;
+            } else {
+                clearInterval(typeInterval);
+                transcriptTyping = false;
+                // Finished typing — remove cursor blink
+                p.classList.remove('live');
+                // Wait 4 seconds then type next line
+                setTimeout(() => typeNextLine(), 4000);
+            }
+        }, speed);
     }
 
     /* =============================================
@@ -708,7 +669,6 @@
        ============================================= */
     async function init() {
         dom.dateEl.textContent = fmtDate();
-        initTicker();
         bindEvents();
         await refresh();
         await loadXedyReport();

@@ -13,10 +13,31 @@
 </head>
 <body class="dark-theme">
 
-    <!-- Live Market Price Ticker -->
+    <!-- TradingView Ticker Tape Widget — Real-time Live Prices -->
     <div class="market-ticker" id="marketTicker">
-        <div class="ticker-wrapper" id="tickerWrapper">
-            <div class="ticker-loading">Memuat harga pasar langsung...</div>
+        <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+            {
+              "symbols": [
+                { "proName": "OANDA:XAUUSD",  "title": "Gold" },
+                { "proName": "OANDA:USDJPY",  "title": "USD/JPY" },
+                { "proName": "OANDA:EURUSD",  "title": "EUR/USD" },
+                { "proName": "OANDA:GBPUSD",  "title": "GBP/USD" },
+                { "proName": "TVC:USOIL",     "title": "WTI Oil" },
+                { "proName": "FOREXCOM:SPXUSD", "title": "S&P 500" },
+                { "proName": "NASDAQ:NDX",    "title": "Nasdaq 100" },
+                { "proName": "BITSTAMP:BTCUSD", "title": "Bitcoin" },
+                { "proName": "OANDA:AUDUSD",  "title": "AUD/USD" },
+                { "proName": "TVC:DXY",       "title": "DXY" }
+              ],
+              "showSymbolLogo": false,
+              "isTransparent": true,
+              "displayMode": "adaptive",
+              "colorTheme": "dark",
+              "locale": "en"
+            }
+            </script>
         </div>
     </div>
 
