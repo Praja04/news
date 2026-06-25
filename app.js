@@ -558,9 +558,10 @@
 
     function renderForecastCards() {
         const grid = document.getElementById('forecastCardsGrid');
+        const tvCard = document.getElementById('tvQuotesCard');
         if (!grid) return;
 
-        const cards = FORECAST_CARDS.map((item, index) => {
+        const cards = FORECAST_CARDS.map((item) => {
             const isBullish = item.bias === 'BULLISH';
             const badgeClass = isBullish ? 'bullish' : 'bearish';
             const glowClass = isBullish ? 'bullish-glow' : 'bearish-glow';
@@ -571,7 +572,6 @@
                         <span class="forecast-card-pair">${item.pair}</span>
                         <span class="forecast-badge ${badgeClass}">${item.bias}</span>
                     </div>
-                    
                     <div class="forecast-timeframe-box">
                         <span class="forecast-tf-label">4H FORECAST</span>
                         <div class="forecast-tf-row">
@@ -580,7 +580,6 @@
                         </div>
                         <div class="forecast-tf-acc">Akurasi: ${item.h4.acc}%</div>
                     </div>
-
                     <div class="forecast-timeframe-box">
                         <span class="forecast-tf-label">1D FORECAST</span>
                         <div class="forecast-tf-row">
@@ -589,7 +588,6 @@
                         </div>
                         <div class="forecast-tf-acc">Akurasi: ${item.d1.acc}%</div>
                     </div>
-
                     <div class="forecast-macro-box" title="${escHtml(item.macro)}">
                         ${escHtml(item.macro)}
                     </div>
@@ -597,42 +595,14 @@
             `;
         }).join('');
 
-        // 6th slot: TradingView Market Quotes widget (real-time prices for 5 pairs)
-        const tvWidget = `
-            <div class="forecast-card tv-quotes-card">
-                <div class="forecast-card-header">
-                    <span class="forecast-card-pair" style="font-size:10px; letter-spacing:0.06em;">HARGA REAL-TIME</span>
-                    <span class="tv-live-badge"><span class="pulse-dot" style="width:6px;height:6px;"></span> LIVE</span>
-                </div>
-                <div class="tv-quotes-wrap">
-                    <div class="tradingview-widget-container" style="height:100%;width:100%;">
-                        <div class="tradingview-widget-container__widget" style="height:100%;width:100%;"></div>
-                        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
-                        {
-                          "title": "",
-                          "symbols": [
-                            ["Gold", "OANDA:XAUUSD|1D"],
-                            ["USD/JPY", "OANDA:USDJPY|1D"],
-                            ["WTI Oil", "TVC:USOIL|1D"],
-                            ["EUR/USD", "OANDA:EURUSD|1D"],
-                            ["GBP/USD", "OANDA:GBPUSD|1D"],
-                            ["Dow Jones", "FOREXCOM:DJI|1D"]
-                          ],
-                          "showSymbolLogo": false,
-                          "isTransparent": true,
-                          "colorTheme": "dark",
-                          "locale": "en",
-                          "width": "100%",
-                          "height": "100%"
-                        }
-                        </script>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        grid.innerHTML = cards + tvWidget;
+        // Insert 5 cards before the static TV widget card
+        const tmp = document.createElement('div');
+        tmp.innerHTML = cards;
+        while (tmp.firstChild) {
+            grid.insertBefore(tmp.firstChild, tvCard);
+        }
     }
+
 
 
     const TRANSCRIPT_LINES = [
