@@ -563,6 +563,147 @@
     }
 
     /* =============================================
+       FORECAST CARDS & SPEECH-TO-TEXT SIMULATION
+       ============================================= */
+    const FORECAST_CARDS = [
+        {
+            pair: 'XAUUSD',
+            bias: 'BEARISH',
+            h4: { bull: 28, bear: 72, range: '$4.080 - $4.140', acc: 85 },
+            d1: { bull: 32, bear: 68, range: '$4.020 - $4.155', acc: 85 },
+            macro: 'Kombinasi Fed hawkish, DXY 101, dan real yield 2.21% menciptakan triple bearish pressure. Harga di bawah MA200 dengan indikasi death cross. GS memotong target dari $5.400 ke $4.900.'
+        },
+        {
+            pair: 'USDJPY',
+            bias: 'BULLISH',
+            h4: { bull: 55, bear: 45, range: '161.20 - 162.30', acc: 78 },
+            d1: { bull: 48, bear: 52, range: '159.50 - 163.00', acc: 75 },
+            macro: 'Selisih suku bunga AS-Jepang (275bps) terus mendorong pair naik. Namun, posisi COT short Yen sebesar 145.8K memicu risiko short squeeze yang tinggi. MoF bersiap intervensi di atas level 162.'
+        },
+        {
+            pair: 'WTI OIL',
+            bias: 'BEARISH',
+            h4: { bull: 35, bear: 65, range: '$72.50 - $74.50', acc: 80 },
+            d1: { bull: 38, bear: 62, range: '$71.00 - $75.00', acc: 78 },
+            macro: 'Kesepakatan AS-Iran memangkas geopolitical premium secara signifikan. Penguatan DXY turut menekan harga komoditas.'
+        },
+        {
+            pair: 'EURUSD',
+            bias: 'BEARISH',
+            h4: { bull: 42, bear: 58, range: '1.1380 - 1.1460', acc: 75 },
+            d1: { bull: 45, bear: 55, range: '1.1320 - 1.1500', acc: 73 },
+            macro: 'Sikap ECB yang netral berhadapan dengan Fed yang hawkish membuat EUR tertekan secara moderat. Terjadi deleveraging pada COT sebesar -34.9K kontrak.'
+        },
+        {
+            pair: 'GBPUSD',
+            bias: 'BEARISH',
+            h4: { bull: 44, bear: 56, range: '1.3190 - 1.3280', acc: 72 },
+            d1: { bull: 46, bear: 54, range: '1.3150 - 1.3320', acc: 70 },
+            macro: 'BoE diperkirakan menahan suku bunga tanpa katalis tambahan. Dominasi DXY membuat GBP bergerak defensif.'
+        }
+    ];
+
+    function renderForecastCards() {
+        const grid = document.getElementById('forecastCardsGrid');
+        if (!grid) return;
+
+        grid.innerHTML = FORECAST_CARDS.map((item, index) => {
+            const isBullish = item.bias === 'BULLISH';
+            const badgeClass = isBullish ? 'bullish' : 'bearish';
+            const glowClass = isBullish ? 'bullish-glow' : 'bearish-glow';
+            const spanClass = (index === FORECAST_CARDS.length - 1 && FORECAST_CARDS.length % 2 !== 0) ? 'span-2' : '';
+            
+            return `
+                <div class="forecast-card ${glowClass} ${spanClass}">
+                    <div class="forecast-card-header">
+                        <span class="forecast-card-pair">${item.pair}</span>
+                        <span class="forecast-badge ${badgeClass}">${item.bias}</span>
+                    </div>
+                    
+                    <div class="forecast-timeframe-box">
+                        <span class="forecast-tf-label">4H FORECAST</span>
+                        <div class="forecast-tf-row">
+                            <span class="forecast-tf-bias ${badgeClass}">${isBullish ? `BULL ${item.h4.bull}%` : `BEAR ${item.h4.bear}%`}</span>
+                            <span class="forecast-tf-range">${item.h4.range}</span>
+                        </div>
+                        <div class="forecast-tf-acc">Akurasi: ${item.h4.acc}%</div>
+                    </div>
+
+                    <div class="forecast-timeframe-box">
+                        <span class="forecast-tf-label">1D FORECAST</span>
+                        <div class="forecast-tf-row">
+                            <span class="forecast-tf-bias ${badgeClass}">${isBullish ? `BULL ${item.d1.bull}%` : `BEAR ${item.d1.bear}%`}</span>
+                            <span class="forecast-tf-range">${item.d1.range}</span>
+                        </div>
+                        <div class="forecast-tf-acc">Akurasi: ${item.d1.acc}%</div>
+                    </div>
+
+                    <div class="forecast-macro-box" title="${escHtml(item.macro)}">
+                        ${escHtml(item.macro)}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    const TRANSCRIPT_LINES = [
+        "CNBC INDONESIA: ...selamat pagi pemirsa, kembali lagi di live streaming program Squawk Box CNBC Indonesia...",
+        "CNBC INDONESIA: ...bersama saya hari ini, kita akan membahas pergerakan pasar komoditas yang cukup volatile...",
+        "CNBC INDONESIA: ...harga emas dunia terpantau di level $4,116 per troy ounce, mengalami pelemahan sebesar 1.86%...",
+        "CNBC INDONESIA: ...selisih yield obligasi US 10-Tahun yang berada di 4.51% meningkatkan opportunity cost emas...",
+        "CNBC INDONESIA: ...analis memperkirakan harga emas berisiko mendekati level support terdekat di $4,080...",
+        "CNBC INDONESIA: ...seperti rilis data yang kami terima, The Fed diperkirakan menahan suku bunga lebih lama...",
+        "CNBC INDONESIA: ...mari kita hubungkan langsung dengan pengamat pasar forex di bursa Tokyo...",
+        "CNBC INDONESIA: ...nilai tukar USD/JPY masih tertahan di atas level 161.71, memicu sinyal intervensi verbal dari MoF...",
+        "CNBC INDONESIA: ...Wakil Menteri Keuangan Jepang, Masato Katayama, menyatakan ketidaknyamanan terhadap spekulasi berlebih...",
+        "CNBC INDONESIA: ...posisi COT spekulatif untuk Yen menunjukkan posisi net-short mencapai level ekstrem 145.8K kontrak...",
+        "CNBC INDONESIA: ...banyak spekulan bersiap menghadapi potensi short squeeze mendadak jika intervensi dilakukan...",
+        "CNBC INDONESIA: ...di sisi lain, bursa saham wall street melemah menyusul pelemahan saham-saham teknologi raksasa...",
+        "CNBC INDONESIA: ...sentimen pasar komoditas minyak mentah WTI berada di kisaran $73.80 per barel...",
+        "CNBC INDONESIA: ...kesepakatan antara AS dan Iran memangkas premi risiko geopolitik secara signifikan di pasar energi...",
+        "CNBC INDONESIA: ...investor bersiap menghadapi rilis data inflasi PCE esok hari untuk melihat kejelasan kebijakan Fed...",
+        "CNBC INDONESIA: ...terima kasih, demikian laporan singkat pergerakan pasar hari ini. Kami kembali ke studio..."
+    ];
+
+    let transcriptIndex = 0;
+    function initSpeechToText() {
+        const scrollContainer = document.getElementById('transcriptScroll');
+        if (!scrollContainer) return;
+
+        scrollContainer.innerHTML = '';
+
+        addTranscriptLine("SISTEM: Menghubungkan ke audio stream CNBC Indonesia Live TV...");
+        
+        setTimeout(() => {
+            addTranscriptLine("SISTEM: Koneksi audio stabil. Memulai speech-to-text transkripsi...");
+        }, 1500);
+
+        setInterval(() => {
+            const line = TRANSCRIPT_LINES[transcriptIndex];
+            addTranscriptLine(line);
+            transcriptIndex = (transcriptIndex + 1) % TRANSCRIPT_LINES.length;
+        }, 8000);
+    }
+
+    function addTranscriptLine(text) {
+        const scrollContainer = document.getElementById('transcriptScroll');
+        if (!scrollContainer) return;
+
+        const p = document.createElement('p');
+        p.className = 'transcript-line live';
+        
+        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        p.innerHTML = `<span style="color: var(--text-muted); font-size: 10px;">[${timestamp}]</span> ${escHtml(text)}`;
+        
+        scrollContainer.appendChild(p);
+        scrollContainer.scrollTop = scrollContainer.scrollHeight;
+        
+        while (scrollContainer.children.length > 50) {
+            scrollContainer.removeChild(scrollContainer.firstChild);
+        }
+    }
+
+    /* =============================================
        INIT
        ============================================= */
     async function init() {
@@ -571,6 +712,8 @@
         bindEvents();
         await refresh();
         await loadXedyReport();
+        renderForecastCards();
+        initSpeechToText();
 
         // Auto-refresh every 5 minutes
         setInterval(() => {

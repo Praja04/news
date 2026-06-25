@@ -62,6 +62,60 @@
     <!-- Main Content -->
     <main class="main-content">
 
+        <!-- New Section: Stream and Forecast Cards -->
+        <section class="forecast-stream-section">
+            <div class="forecast-stream-container">
+                <!-- Left Column: Live TV and Speech-to-Text -->
+                <div class="stream-column">
+                    <div class="widget-box stream-widget">
+                        <div class="widget-header">
+                            <h3>CNBC Indonesia Live TV</h3>
+                            <div class="live-status">
+                                <span class="pulse-dot"></span>
+                                <span class="live-label">SIARAN LANGSUNG</span>
+                            </div>
+                        </div>
+                        <div class="live-tv-container">
+                            <iframe 
+                                class="live-tv-player"
+                                src="https://www.cnbcindonesia.com/embed/tv?smartautoplay=true&comscore=off&counterviews=true" 
+                                title="CNBC Indonesia Live TV" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                    </div>
+                    <!-- Live Transcription Box -->
+                    <div class="widget-box transcript-widget">
+                        <div class="widget-header">
+                            <h3>Transkripsi Siaran Langsung (AI Speech-to-Text)</h3>
+                            <div class="live-status">
+                                <span class="pulse-dot blue"></span>
+                                <span class="live-label text-blue">TRANSKRIP REAL-TIME</span>
+                            </div>
+                        </div>
+                        <div class="transcript-body" id="liveTranscriptBody">
+                            <div class="transcript-scroll" id="transcriptScroll">
+                                <p class="transcript-line text-muted">Menginisialisasi transkripsi live...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Forecast Cards -->
+                <div class="forecast-cards-column">
+                    <div class="forecast-cards-header">
+                        <h3>Prakiraan Pasar Lintas Aset (Detail Forecast)</h3>
+                        <span class="forecast-date">22 Juni 2026</span>
+                    </div>
+                    <div class="forecast-cards-grid" id="forecastCardsGrid">
+                        <!-- Cards will be populated dynamically from JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Top Widgets Section: Market Sentiment, AI Model Stats & Summary -->
         <section class="top-widgets">
             <!-- 1. Market Sentiment -->
@@ -163,29 +217,7 @@
                 </section>
             </div>
 
-            <!-- Right Column: Sidebar -->
             <aside class="news-sidebar">
-                <!-- CNBC Indonesia Live TV Widget -->
-                <div class="widget-box live-tv-widget">
-                    <div class="widget-header">
-                        <h3>CNBC Indonesia Live TV</h3>
-                        <div class="live-status">
-                            <span class="pulse-dot"></span>
-                            <span class="live-label">SIARAN LANGSUNG</span>
-                        </div>
-                    </div>
-                    <div class="live-tv-container">
-                        <iframe 
-                            class="live-tv-player"
-                            src="https://www.cnbcindonesia.com/embed/tv?smartautoplay=true&comscore=off&counterviews=true" 
-                            title="CNBC Indonesia Live TV" 
-                            frameborder="0" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                            allowfullscreen>
-                        </iframe>
-                    </div>
-                </div>
-
                 <!-- XEDY V10 — XAUUSD Intelligence Panel -->
                 <div class="widget-box xedy-widget" id="xedyWidget">
                     <div class="widget-header">
